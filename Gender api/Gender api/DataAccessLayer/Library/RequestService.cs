@@ -7,6 +7,12 @@ namespace Gender_api.DataAccessLayer.Library
 {
     public static class RequestService
     {
+        /// <summary>
+        /// Creates the request.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="ip">The ip.</param>
         public static void CreateRequest(string key, string name, string ip)
         {
             using (var db = new GenderEnt())

@@ -1,10 +1,35 @@
 ﻿using System;
 using System.Linq;
+using Gender_api.Models;
 
 namespace Gender_api.DataAccessLayer.Library
 {
     public static class KeyService
     {
+        public static ViewKeyModel GetKeyInfo(int id)
+        {
+            using (var db = new GenderEnt())
+            {
+                return (from a in db.keys
+                    where a.id == id
+                    select new ViewKeyModel
+                           {
+                               Company = a.users.company,
+                               Email = a.users.email,
+                               Firstname = a.users.firstname,
+                               Key = a.key,
+                               Lastname = a.users.lastname,
+                               RequestLimit = a.requests_allowed,
+                               Requests = a.requests
+                           }).SingleOrDefault();
+            }
+        }
+
+        /// <summary>
+        /// Verifies the key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
         public static bool VerifyKey(string key)
         {
             using (var db = new GenderEnt())
@@ -13,30 +38,46 @@ namespace Gender_api.DataAccessLayer.Library
             }
         }
 
-        public static void CreateKey(int userId)
+        /// <summary>
+        /// Creates the key.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="requests"></param>
+        public static int CreateKey(int userId, int requests)
         {
             using (var db = new GenderEnt())
             {
-                db.keys.Add(new keys
-                            {
-                                user_id = userId,
-                                key = Guid.NewGuid().ToString(),
-                                requests = 0,
-                                requests_allowed = 1000000
-                            });
+                var newKey = new keys
+                             {
+                                 user_id = userId,
+                                 key = Guid.NewGuid().ToString(),
+                                 requests = 0,
+                                 requests_allowed = requests
+                             };
+
+                db.keys.Add(newKey);
 
                 db.SaveChanges();
+
+                return newKey.id;
             }
         }
 
+        /// <summary>
+        /// Resets the requests.
+        /// </summary>
         public static void ResetRequests()
         {
             using (var db = new GenderEnt())
             {
-                db.Database.ExecuteSqlCommand("UPDATE keys SET requests = 0;");
+                db.Database.ExecuteSqlCommandAsync("UPDATE keys SET requests = 0;");
             }
         }
 
+        /// <summary>
+        /// Adds the request.
+        /// </summary>
+        /// <param name="key">The key.</param>
         public static void AddRequest(string key)
         {
             using (var db = new GenderEnt())
@@ -52,6 +93,11 @@ namespace Gender_api.DataAccessLayer.Library
             }
         }
 
+        /// <summary>
+        /// Requests the limit.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
         public static bool RequestLimit(string key)
         {
             using (var db = new GenderEnt())

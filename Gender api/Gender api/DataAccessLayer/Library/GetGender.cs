@@ -7,6 +7,11 @@ namespace Gender_api.DataAccessLayer.Library
 {
     public static class GetGender
     {
+        /// <summary>
+        /// Gets the single gender.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns></returns>
         public static object GetSingleGender(string name)
         {
             using (var db = new GenderEnt())
@@ -62,6 +67,11 @@ namespace Gender_api.DataAccessLayer.Library
             }
         }
 
+        /// <summary>
+        /// Bulks the gender.
+        /// </summary>
+        /// <param name="genders">The genders.</param>
+        /// <returns></returns>
         public static List<object> BulkGender(List<string> genders)
         {
             using (var db = new GenderEnt())
@@ -70,7 +80,7 @@ namespace Gender_api.DataAccessLayer.Library
 
                 foreach (var d in genders)
                 {
-                    var getNames = (from a in db.names where a.name.Equals(d) select a).ToList();
+                    var getNames = (from a in db.names.AsNoTracking() where a.name.Equals(d) select a).ToList();
 
                     if (getNames.Any())
                     {
@@ -118,6 +128,11 @@ namespace Gender_api.DataAccessLayer.Library
             }
         }
 
+        /// <summary>
+        /// Determines the gender.
+        /// </summary>
+        /// <param name="gender">The gender.</param>
+        /// <returns></returns>
         public static string DetermineGender(int gender)
         {
             switch (gender)

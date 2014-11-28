@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using BusinessLayer.Account;
 using Gender_api.Models;
 
@@ -9,11 +10,16 @@ namespace Gender_api.DataAccessLayer.Library
 {
     public static class UserService
     {
+        /// <summary>
+        /// Creates the user.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns></returns>
         public static bool CreateUser(CreateUserModel data)
         {
             using (var db = new GenderEnt())
             {
-                if (!(from a in db.users where a.email == data.Email select a.id).Any())
+                if (!(from a in db.users.AsNoTracking() where a.email == data.Email select a.id).Any())
                 {
                     db.users.Add(new users
                                  {
@@ -33,6 +39,19 @@ namespace Gender_api.DataAccessLayer.Library
             }
         }
 
+        public static IEnumerable<SelectListItem> FillUserDropDownList()
+        {
+            using (var db = new GenderEnt())
+            {
+                return (from a in db.users.AsNoTracking()
+                    select new SelectListItem
+                           {
+                               Selected = false,
+                               Text = a.email,
+                               Value = a.id.ToString()
+                           }).ToList();
+            }
+        }
         
 
         /// <summary>
