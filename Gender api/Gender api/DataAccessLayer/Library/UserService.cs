@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using BusinessLayer.Account;
 using Gender_api.Models;
 
 namespace Gender_api.DataAccessLayer.Library
@@ -21,7 +22,7 @@ namespace Gender_api.DataAccessLayer.Library
                                      email = data.Email,
                                      firstname = data.Firstname,
                                      lastname = data.Lastname,
-                                     password = data.Password
+                                     password = BCrypt.HashPassword(data.Password, BCrypt.GenerateSalt())
                                  });
 
                     db.SaveChanges();
@@ -31,5 +32,51 @@ namespace Gender_api.DataAccessLayer.Library
                 return false;
             }
         }
+
+        
+
+        /// <summary>
+        /// Check if email number exist.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <returns></returns>
+        public static bool EmailExist(string email)
+        {
+            using (var db = new GenderEnt())
+            {
+                return (from a in db.users.AsNoTracking() where a.email.Equals(email) select a.id).Any();
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the temporary user.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <returns></returns>
+        public static TempUser RetrieveTempUser(string email)
+        {
+            using (var db = new GenderEnt())
+            {
+                var getUser = (from a in db.users.AsNoTracking()
+                               where a.email.Equals(email)
+                               select new TempUser
+                               {
+                                   Email = a.email,
+                                   Password = a.password
+                               }).SingleOrDefault();
+
+                return getUser;
+            }
+        }
+
+        public class TempUser
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
+
+        
+
+        
     }
 }

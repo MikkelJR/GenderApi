@@ -8,34 +8,34 @@ namespace Gender_api.Models
 {
     public class CreateUserModel
     {
-        [Required(ErrorMessage = "Indtast venligst en email")]
+        [Required(ErrorMessage = "Not a valid emal")]
         [DataType(DataType.EmailAddress)]
-        [EmailAddress(ErrorMessage = "Indtast venligst en gyldig email")]
+        [EmailAddress(ErrorMessage = "Not a valid emal")]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Indtast venligst et kodeord")]
-        [StringLength(255, ErrorMessage = "Kodeord skal være minimum 5 tegn", MinimumLength = 5)]
+        [Required(ErrorMessage = "Password cannot be empty")]
+        [StringLength(255, ErrorMessage = "Password have to be minimum 5 characters long", MinimumLength = 5)]
         [DataType(DataType.Password)]
-        [Display(Name = "Kodeord")]
+        [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Kodeord matcher ikke")]
-        [StringLength(255, ErrorMessage = "Kodeord skal være minimum 5 tegn", MinimumLength = 5)]
+        [Required(ErrorMessage = "Paswords dont match")]
+        [StringLength(255, ErrorMessage = "Password have to be minimum 5 characters long", MinimumLength = 5)]
         [DataType(DataType.Password)]
         [Compare("Password")]
-        [Display(Name = "Gentag kodeord")]
+        [Display(Name = "Repeat password")]
         public string RePassword { get; set; }
 
-        [Required(ErrorMessage = "Indtast venligst et navn")]
+        [Required(ErrorMessage = "Please enter a your first name")]
         [Display(Name = "Fornavn")]
         public string Firstname { get; set; }
 
-        [Required(ErrorMessage = "Indtast venligst et efternavn")]
+        [Required(ErrorMessage = "Please enter your last name")]
         [Display(Name = "Efternavn")]
         public string Lastname { get; set; }
 
-        [Display(Name = "Firma navn")]
+        [Display(Name = "Company")]
         public string Company { get; set; }
     }
 }

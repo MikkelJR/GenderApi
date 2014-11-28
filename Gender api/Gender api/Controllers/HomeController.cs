@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 using System.Web.Mvc;
+using BusinessLayer.Account;
+using Gender_api.BusinessLayer;
 using Gender_api.DataAccessLayer;
 using Gender_api.DataAccessLayer.Library;
 using Gender_api.Models;
@@ -32,13 +34,49 @@ namespace Gender_api.Controllers
             {
                 if (UserService.CreateUser(model))
                 {
-                    return View();
+                    AuthenticationService.SignIn(model.Email, true, AuthenticationService.UserRoles.Member);
+
+                    return RedirectToAction("Dashboard");
                 }
-                
             }
 
-            ModelState.AddModelError("Email", "Email allerede i brug");
+            ModelState.AddModelError("Email", "Email allready in use");
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Login(LoginModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var authUser = AuthenticationService.GeAuthenticationResponse(model.Email,model.Password, model.RememberMe);
+
+                if (authUser.Authenticated)
+                {
+                    return RedirectToAction("Dashboard", "Home");
+                }
+            }
+
+            ModelState.AddModelError("Email", "Wrong email or password");
+            return View();
+        }
+
+        [Authorize]
+        public ActionResult Dashboard()
+        {
+            return View();
+        }
+
+        public string Test()
+        {
+            var salt = BCrypt.GenerateSalt();
+            return BCrypt.HashPassword("lol123", salt);
         }
 
         /*
